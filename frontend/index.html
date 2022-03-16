@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+</head>
+  <body>
+    <div class="jumbotron" style="padding: 1rem 2rem;">
+      <div class="container text-center">
+        <img style="width: 30%;" src="ytradio.png" alt="YT Radio">
+      </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 20px;">
+      <div class="row">
+        <div class="col-sm-10 offset-sm-1">
+          <div style="text-align: center;">
+            <div><div id="player"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Playlist: <span id="playlist_name"></span><span id="session_display" style="float: right"></span>
+            </div>
+            <ul id="list" class="list-group list-group-flush" style="overflow: auto; height: 500px">
+            </ul>
+          </div>
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Qui es-tu ? (Ton nom apparaîtra sur la liste de lecture)
+            </div>
+            <div class="card-body">
+              <form action="">
+                <div class="form-group">
+                  <label for="who">Nom</label>
+                  <input id="who" autocomplete="off" type="text" class="form-control">
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Changer de playlist
+            </div>
+            <div class="card-body">
+              <form id="request" action="">
+                <div class="form-group">
+                  <label for="mselectplaylist">Playlist existante</label>
+                  <select id="mselectplaylist" autocomplete="off" type="text" class="form-control">
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" onClick="select_list(false)">Changer !</button>
+              </form>
+            </div>
+            <div class="card-body">
+              <form id="request" action="">
+                <div class="form-group">
+                  <label for="mplaylist">Nouvelle playlist</label>
+                  <input id="mplaylist" autocomplete="off" type="text" class="form-control">
+                </div>
+                <button type="button" class="btn btn-primary" onClick="select_list(true)">Changer !</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Ajouter une vidéo Youtube à la liste de lecture
+            </div>
+            <div class="card-body">
+              <form id="request" action="">
+                <div class="form-group">
+                  <label for="mrequest">Youtube URL</label>
+                  <input id="mrequest" autocomplete="off" type="text" class="form-control">
+                </div>
+                <button type="button" class="btn btn-primary" onClick="add_request(false)">Ajouter !</button>
+                <button type="button" class="btn btn-primary" onClick="add_request(true)">Ajouter en haut !</button>
+              </form>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Ajouter un message à la liste de lecture
+            </div>
+            <div class="card-body">
+              <form id="requesttext" action="">
+                <div class="form-group">
+                  <label for="mrequesttext">Message</label>
+                  <input id="mrequesttext" autocomplete="off" type="text" class="form-control">
+                </div>
+                <button type="button" class="btn btn-primary" onClick="add_requesttext(false)">Ajouter !</button>
+                <button type="button" class="btn btn-primary" onClick="add_requesttext(true)">Ajouter en haut !</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Ajouter un son (jingle) à la liste de lecture
+            </div>
+            <div class="card-body">
+              <form id="requestsound" action="">
+                <div class="form-group">
+                  <label for="mrequestsound">Choisir un son</label>
+                  <select id="mrequestsound" class="form-control">
+
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" onClick="add_requestsound(false)">Ajouter !</button>
+                <button type="button" class="btn btn-primary" onClick="add_requestsound(true)">Ajouter en haut !</button>
+                <button type="button" class="btn btn-info" onClick="refresh_list()">Rafraichir</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              Ajouter un son à la base
+            </div>
+            <div class="card-body">
+              <form id="upload" enctype="multipart/form-data" action="/uploadmusic" method="post">
+                <div class="form-group">
+                  <input id="mupload" name="mp3" autocomplete="off" type="file" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Téléverser !</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
